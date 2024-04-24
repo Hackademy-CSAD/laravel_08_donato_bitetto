@@ -24,7 +24,8 @@ class GameCreateRequest extends FormRequest
         return [
             "title" => "required|string|min:5|max:150",
             "release_year" => "required|integer|min:1900",
-            "poster" => "required|image|max:2048"
+            "poster" => "required|image|max:2048",
+            "category_id" => "required"
         ];
     }
 }

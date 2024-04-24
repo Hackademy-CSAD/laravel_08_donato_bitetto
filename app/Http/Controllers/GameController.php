@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\GameCreateRequest;
-use App\Http\Requests\GameEditRequest;
 use App\Models\Game;
+use App\Models\Console;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Requests\GameEditRequest;
+use App\Http\Requests\GameCreateRequest;
 
 class GameController extends Controller
 {
@@ -24,7 +26,9 @@ class GameController extends Controller
      */
     public function create()
     {
-        return view('games.create');
+        $categories = Category::all();
+        $consoles = Console::all();
+        return view('games.create',compact('categories','consoles'));
     }
 
     /**
@@ -32,11 +36,14 @@ class GameController extends Controller
      */
     public function store(GameCreateRequest $request)
     {
-        Game::create([
+        $game = Game::create([
             "title" => $request->title,
             "release_year" => $request->release_year,
-            "poster" => $request->file('poster')->store('public/img')
+            "poster" => $request->file('poster')->store('public/img'),
+            "category_id" => $request->category_id
         ]);
+
+        $game->consoles()->attach($request->consoles);
 
         return redirect(route('games.create'))->with('success', 'Your game is published correctly!');
     }
@@ -54,7 +61,8 @@ class GameController extends Controller
      */
     public function edit(Game $game)
     {
-        return view('games.edit',compact('game'));
+        $consoles = Console::all();
+        return view('games.edit', compact('game','consoles'));
     }
 
     /**
@@ -68,7 +76,10 @@ class GameController extends Controller
             "poster" => $request->poster ? $request->file('poster')->store('public/img') : $game->poster
         ]);
 
-        return redirect(route('games.edit',compact('game')))->with('success','Game successfully updated!');
+        $game->consoles()->detach();
+        $game->consoles()->attach($request->consoles);
+
+        return redirect(route('games.edit', compact('game')))->with('success', 'Game successfully updated!');
     }
 
     /**
@@ -78,6 +89,6 @@ class GameController extends Controller
     {
         $game->delete();
 
-        return redirect(route('games.index'))->with('success','Game deleted!');
+        return redirect(route('games.index'))->with('success', 'Game deleted!');
     }
 }

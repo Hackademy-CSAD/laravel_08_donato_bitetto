@@ -38,6 +38,19 @@
                             <p class="text-danger">{{ $message }}</p>
                         @enderror
                     </div>
+                    <div class="mb-3 row">
+                        @foreach ($consoles as $console)
+                            <div class="col-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="consoles[]"
+                                        value="{{ $console->id }}" id="flexCheckDefault" @checked($game->consoles->contains('id',$console->id))>
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        {{ $console->name }}
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                     <button type="submit" class="btn btn-primary">Edit</button>
                 </form>
 

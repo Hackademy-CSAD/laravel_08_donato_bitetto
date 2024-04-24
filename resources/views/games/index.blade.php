@@ -10,7 +10,7 @@
                 </div>
             @endif
             @foreach ($games as $game)
-                <div class="col-4">
+                <div class="col-3">
                     <x-card :game="$game" />
                 </div>
             @endforeach
